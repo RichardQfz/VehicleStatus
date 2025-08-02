@@ -8,8 +8,8 @@ LABEL description="Vehicle Status Microservice"
 # 设置工作目录
 WORKDIR /app
 
-# 复制Maven构建的JAR文件
-COPY target/*.jar app.jar
+# 复制构建好的JAR文件
+COPY app.jar app.jar
 
 # 暴露应用端口
 EXPOSE 8080

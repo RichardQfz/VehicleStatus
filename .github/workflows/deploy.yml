@@ -1,0 +1,171 @@
+name: Build and Deploy to GCP
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    types: [ closed ]
+  workflow_dispatch: 
+
+jobs:
+  build:
+    name: 🔨 Build JAR
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Check out code
+      uses: actions/checkout@v4
+    
+    - name: ☕ Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    - name: 🔧 Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+    
+    - name: 🔨 Build with Maven
+      run: mvn clean package -DskipTests
+    
+    - name: 📦 Upload JAR artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: vehicle-status-jar
+        path: target/*.jar
+        retention-days: 1
+
+  deploy:
+    name: 🚀 Deploy to GCP
+    needs: build
+    # 只在推送到 main 分支或 PR 合并时运行
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.merged == true) || github.event_name == 'workflow_dispatch'
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Check out code
+      uses: actions/checkout@v4
+    
+    - name: 📦 Download JAR artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: vehicle-status-jar
+        path: ./target
+    
+    # 配置SSH密钥
+    - name: 🔐 Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.GCP_SSH_KEY }}
+        known_hosts: unnecessary
+        if_key_exists: replace
+    
+    # 手动查询服务器公钥，并且添加服务器到known_hosts
+    - name: 📋 Add server to known hosts
+      run: |
+        ssh-keyscan -H ${{ secrets.VM_IP }} >> ~/.ssh/known_hosts
+    
+    - name: 🚀 Deploy to GCP
+      env: # 声明一些变量，下面会用到
+        HOST: ${{ secrets.VM_IP }}
+        PROJECT_NAME: vehicle-status-service
+        DEPLOY_PATH: /root/vehicle-status
+      run: |
+        # 确保JAR文件存在
+        ls -la target/
+        JAR_FILE=$(ls target/*.jar | head -n 1)
+        echo "📦 找到JAR文件: $JAR_FILE"
+        
+        # 创建部署目录结构
+        mkdir -p deploy-package
+        cp $JAR_FILE deploy-package/app.jar
+        cp Dockerfile deploy-package/
+        cp -r src/main/resources deploy-package/ 2>/dev/null || true
+        
+        # 创建部署脚本
+        cat > deploy-package/deploy.sh << 'EOF'
+        #!/bin/bash
+        set -e
+        
+        echo "🎯 开始在VM上部署..."
+        
+        # 创建部署目录
+        mkdir -p /root/vehicle-status
+        cd /root/vehicle-status
+        
+        echo "📂 当前目录: $(pwd)"
+        
+        # 停止旧容器（如果存在）
+        echo "🛑 停止旧容器..."
+        docker stop vehicle-status-app 2>/dev/null || true
+        docker rm vehicle-status-app 2>/dev/null || true
+        
+        # 构建Docker镜像
+        echo "🔨 构建Docker镜像..."
+        docker build -t vehicle-status-service:latest . || {
+          echo "❌ Docker镜像构建失败"
+          exit 1
+        }
+        
+        # 启动新容器
+        echo "🚀 启动应用容器..."
+        docker run -d \
+          --name vehicle-status-app \
+          --restart unless-stopped \
+          -p 8080:8080 \
+          -e SPRING_PROFILES_ACTIVE=production \
+          --memory="1g" \
+          --cpus="1.0" \
+          vehicle-status-service:latest || {
+          echo "❌ 容器启动失败"
+          exit 1
+        }
+        
+        # 等待应用启动
+        echo "⏳ 等待应用启动..."
+        sleep 30
+        
+        # 健康检查
+        echo "🔍 执行健康检查..."
+        for i in {1..10}; do
+          if curl -f http://localhost:8080/api/vehicle-status/speed/TEST >/dev/null 2>&1; then
+            echo "✅ 应用健康检查通过！"
+            break
+          elif [ $i -eq 10 ]; then
+            echo "❌ 应用健康检查失败，请检查日志"
+            docker logs vehicle-status-app --tail 20
+            exit 1
+          else
+            echo "⏳ 健康检查第 $i 次失败，等待重试..."
+            sleep 10
+          fi
+        done
+        
+        # 显示部署结果
+        echo "🎉 部署完成！"
+        echo "🌐 应用访问地址: http://$(curl -s ifconfig.me):8080"
+        echo "📊 容器状态:"
+        docker ps | grep vehicle-status
+        
+        # 清理旧镜像
+        echo "🧹 清理旧镜像..."
+        docker image prune -f
+        
+        EOF
+        
+        # 设置脚本权限
+        chmod +x deploy-package/deploy.sh
+        
+        # 将部署包传输到VM
+        echo "📤 传输部署包到VM..."
+        scp -r deploy-package/* root@$HOST:/root/vehicle-status/
+        
+        # 在VM上执行部署脚本
+        echo "🔄 在VM上执行部署..."
+        ssh -o StrictHostKeyChecking=no root@$HOST 'cd /root/vehicle-status && ./deploy.sh' 
