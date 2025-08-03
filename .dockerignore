@@ -1,0 +1,62 @@
+# Git相关文件
+.git
+.gitignore
+.gitattributes
+
+# IDE相关文件
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+*~
+
+# Maven相关文件（除了target目录，因为需要JAR文件）
+.mvn/
+mvnw
+mvnw.cmd
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# 日志文件
+*.log
+logs/
+
+# 临时文件
+*.tmp
+*.temp
+*.pid
+
+# 测试覆盖率报告
+target/site/
+target/surefire-reports/
+target/test-classes/
+
+# Docker相关文件
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# CI/CD相关文件
+.github/
+Jenkinsfile
+
+# 文档文件
+README.md
+*.md
+docs/
+
+# 配置文件备份
+*.bak
+*.orig
+
+# Node.js相关（如果有前端）
+node_modules/
+npm-debug.log*
+
+# 环境变量文件
+.env
+.env.local
+.env.*.local 
