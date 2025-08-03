@@ -7,6 +7,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service class for vehicle status.
+ *
+ * @author Yutong Cheng u7739713
+ */
 @Service
 public class VehicleStatusService
 {

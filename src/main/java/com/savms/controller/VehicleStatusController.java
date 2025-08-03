@@ -7,6 +7,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller class for vehicle status.
+ *
+ * @author Yutong Cheng u7739713
+ */
 @RestController
 @RequestMapping("/api/vehicle-status")
 public class VehicleStatusController

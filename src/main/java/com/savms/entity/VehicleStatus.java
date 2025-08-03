@@ -7,7 +7,7 @@ package com.savms.entity;
  */
 public class VehicleStatus
 {
-    private String plate;
+    private String licensePlate;
 
     private double speed;
     private double leftoverEnergy;
@@ -29,14 +29,14 @@ public class VehicleStatus
     public VehicleStatus() {}
 
     // Getters and Setters
-    public String getPlate()
+    public String getLicensePlate()
     {
-        return plate;
+        return licensePlate;
     }
 
-    public void setPlate( String plate )
+    public void setLicensePlate( String licensePlate )
     {
-        this.plate = plate;
+        this.licensePlate = licensePlate;
     }
 
     public double getSpeed()
