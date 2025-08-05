@@ -20,11 +20,11 @@ public class AlertController
     private AlertService alertService;
 
     /**
-     * 获取指定车牌号的所有alert
-     * GET /api/alert/{车牌号}
+     * Get all alerts for specified license plate
+     * GET /api/alert/{licensePlate}
      */
     @GetMapping("/{licensePlate}")
-    public List<Alert> getAlertsByLicensePlate(@PathVariable String licensePlate) {
+      public List<Alert> getAlertsByLicensePlate(@PathVariable String licensePlate) {
         return alertService.getAlertsByLicensePlate(licensePlate);
     }
 } 

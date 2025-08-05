@@ -18,7 +18,7 @@ public class AlertService
     private VehicleStatusService vehicleStatusService;
 
     /**
-     * 根据车牌号检查车辆状态并生成相应的alert
+     * Check alert base on vehicle license plate
      */
     public List<Alert> getAlertsByLicensePlate(String licensePlate) {
         Vehicle vehicleStatus = vehicleStatusService.getStatusByPlate(licensePlate);
@@ -28,89 +28,89 @@ public class AlertService
         System.out.println(vehicleStatus);
         List<Alert> alerts = new ArrayList<>();
 
-        // 检查速度过快
-        if (vehicleStatus.getSpeed() > -2) {
+        // Check for excessive speed
+        if (vehicleStatus.getSpeed() > 120) {
             Alert speedAlert = new Alert(
                 licensePlate,
                 "SPEED_OVER_LIMIT",
-                "车辆速度过快: " + vehicleStatus.getSpeed() + " km/h",
+                "Vehicle speed too high: " + vehicleStatus.getSpeed() + " km/h",
                 vehicleStatus.getSpeed() > 150 ? "CRITICAL" : "HIGH"
             );
             alerts.add(speedAlert);
         }
 
-        // 检查电量不足
+        // Check for low energy
         if (vehicleStatus.getLeftoverEnergy() < 20) {
             Alert energyAlert = new Alert(
                 licensePlate,
                 "LOW_ENERGY",
-                "电量不足: " + vehicleStatus.getLeftoverEnergy() + "%",
+                "Low energy level: " + vehicleStatus.getLeftoverEnergy() + "%",
                 vehicleStatus.getLeftoverEnergy() < 10 ? "CRITICAL" : "MEDIUM"
             );
             alerts.add(energyAlert);
         }
 
-        // 检查连接状态
+        // Check connection status
         if (vehicleStatus.getConnectionStatus() == 0) {
             Alert connectionAlert = new Alert(
                 licensePlate,
                 "CONNECTION_LOST",
-                "车辆连接丢失",
+                "Vehicle connection lost",
                 "HIGH"
             );
             alerts.add(connectionAlert);
         }
 
-        // 检查发动机状态
+        // Check engine status
         if (vehicleStatus.getEngineCondition() == 0) {
             Alert engineAlert = new Alert(
                 licensePlate,
                 "ENGINE_ISSUE",
-                "发动机状态异常",
+                "Engine condition abnormal",
                 "CRITICAL"
             );
             alerts.add(engineAlert);
         }
 
-        // 检查机油温度
+        // Check oil temperature
         if (vehicleStatus.getLubeOilTemp() > 120) {
             Alert oilTempAlert = new Alert(
                 licensePlate,
                 "OIL_TEMP_HIGH",
-                "机油温度过高: " + vehicleStatus.getLubeOilTemp() + "°C",
+                "Oil temperature too high: " + vehicleStatus.getLubeOilTemp() + "°C",
                 "HIGH"
             );
             alerts.add(oilTempAlert);
         }
 
-        // 检查冷却液温度
+        // Check coolant temperature
         if (vehicleStatus.getCoolantTemp() > 100) {
             Alert coolantTempAlert = new Alert(
                 licensePlate,
                 "COOLANT_TEMP_HIGH",
-                "冷却液温度过高: " + vehicleStatus.getCoolantTemp() + "°C",
+                "Coolant temperature too high: " + vehicleStatus.getCoolantTemp() + "°C",
                 "HIGH"
             );
             alerts.add(coolantTempAlert);
         }
 
-        // 检查机油压力
+        // Check oil pressure
         if (vehicleStatus.getLubeOilPressure() < 1.0) {
             Alert oilPressureAlert = new Alert(
                 licensePlate,
                 "OIL_PRESSURE_LOW",
-                "机油压力过低: " + vehicleStatus.getLubeOilPressure() + " bar",
+                "Oil pressure too low: " + vehicleStatus.getLubeOilPressure() + " bar",
                 "CRITICAL"
             );
             alerts.add(oilPressureAlert);
         }
 
-        // 检查燃油压力
+        // Check fuel pressure
         if (vehicleStatus.getFuelPressure() < 2.0) {
             Alert fuelPressureAlert = new Alert(
                 licensePlate,
                 "FUEL_PRESSURE_LOW",
-                "燃油压力过低: " + vehicleStatus.getFuelPressure() + " bar",
+                "Fuel pressure too low: " + vehicleStatus.getFuelPressure() + " bar",
                 "HIGH"
             );
             alerts.add(fuelPressureAlert);
