@@ -5,7 +5,7 @@ package com.savms.entity;
  *
  * @author Yutong Cheng u7739713
  */
-public class VehicleStatus
+public class Vehicle
 {
     private String licensePlate;
 
@@ -26,7 +26,7 @@ public class VehicleStatus
 
     private int engineCondition;
 
-    public VehicleStatus() {}
+    public Vehicle() {}
 
     // Getters and Setters
     public String getLicensePlate()

@@ -1,6 +1,6 @@
 package com.savms.controller;
 
-import com.savms.entity.VehicleStatus;
+import com.savms.entity.Vehicle;
 import com.savms.service.VehicleStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -26,25 +26,25 @@ public class VehicleStatusController
     }
 
     @GetMapping("/{plate}")
-    public VehicleStatus getStatusByPlate(@PathVariable String plate)
+    public Vehicle getStatusByPlate(@PathVariable String plate)
     {
         return vehicleStatusService.getStatusByPlate(plate);
     }
 
     @GetMapping("/all")
-    public List<VehicleStatus> getAllStatuses()
+    public List<Vehicle> getAllStatuses()
     {
         return vehicleStatusService.getAllStatuses();
     }
 
     @PostMapping("/")
-    public boolean insertStatus(@RequestBody VehicleStatus status)
+    public boolean insertStatus(@RequestBody Vehicle status)
     {
         return vehicleStatusService.insertStatus(status);
     }
 
     @PutMapping("/{plate}")
-    public boolean updateStatus(@PathVariable String plate, @RequestBody VehicleStatus status)
+    public boolean updateStatus(@PathVariable String plate, @RequestBody Vehicle status)
     {
         return vehicleStatusService.updateStatusByPlate(plate, status);
     }

@@ -9,6 +9,7 @@ on:
   workflow_dispatch: 
 
 jobs:
+  # 打包
   build:
     name: 🔨 Build JAR
     runs-on: ubuntu-latest
@@ -40,6 +41,7 @@ jobs:
         path: target/*.jar
         retention-days: 1
 
+  # 发送
   deploy:
     name: 🚀 Deploy to GCP
     needs: build

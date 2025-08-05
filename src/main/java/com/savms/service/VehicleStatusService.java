@@ -1,6 +1,6 @@
 package com.savms.service;
 
-import com.savms.entity.VehicleStatus;
+import com.savms.entity.Vehicle;
 import com.savms.repository.VehicleStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,17 +23,17 @@ public class VehicleStatusService
         return vehicleStatusRepository.getVehicleSpeedByPlate(plate);
     }
 
-    public VehicleStatus getStatusByPlate(String plate)
+    public Vehicle getStatusByPlate(String plate)
     {
         return vehicleStatusRepository.getVehicleStatusByPlate(plate);
     }
 
-    public List<VehicleStatus> getAllStatuses()
+    public List<Vehicle> getAllStatuses()
     {
         return vehicleStatusRepository.getAllVehicleStatuses();
     }
 
-    public boolean updateStatusByPlate(String plate, VehicleStatus newStatus)
+    public boolean updateStatusByPlate(String plate, Vehicle newStatus)
     {
         return vehicleStatusRepository.updateVehicleStatusByPlate(plate, newStatus);
     }
@@ -43,7 +43,7 @@ public class VehicleStatusService
         return vehicleStatusRepository.deleteVehicleStatusByPlate(plate);
     }
 
-    public boolean insertStatus(VehicleStatus status)
+    public boolean insertStatus(Vehicle status)
     {
         return vehicleStatusRepository.insertVehicleStatus(status);
     }
