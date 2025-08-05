@@ -17,6 +17,9 @@ public class AlertService
     @Autowired
     private VehicleStatusService vehicleStatusService;
 
+    @Autowired
+    private LogService logService;
+
     /**
      * Check alert base on vehicle license plate
      */
@@ -37,6 +40,7 @@ public class AlertService
                 vehicleStatus.getSpeed() > 150 ? "CRITICAL" : "HIGH"
             );
             alerts.add(speedAlert);
+            logService.logAlert(speedAlert);
         }
 
         // Check for low energy
@@ -48,6 +52,7 @@ public class AlertService
                 vehicleStatus.getLeftoverEnergy() < 10 ? "CRITICAL" : "MEDIUM"
             );
             alerts.add(energyAlert);
+            logService.logAlert(energyAlert);
         }
 
         // Check connection status
@@ -59,6 +64,7 @@ public class AlertService
                 "HIGH"
             );
             alerts.add(connectionAlert);
+            logService.logAlert(connectionAlert);
         }
 
         // Check engine status
@@ -70,6 +76,7 @@ public class AlertService
                 "CRITICAL"
             );
             alerts.add(engineAlert);
+            logService.logAlert(engineAlert);
         }
 
         // Check oil temperature
@@ -81,6 +88,7 @@ public class AlertService
                 "HIGH"
             );
             alerts.add(oilTempAlert);
+            logService.logAlert(oilTempAlert);
         }
 
         // Check coolant temperature
@@ -92,6 +100,7 @@ public class AlertService
                 "HIGH"
             );
             alerts.add(coolantTempAlert);
+            logService.logAlert(coolantTempAlert);
         }
 
         // Check oil pressure
@@ -103,6 +112,7 @@ public class AlertService
                 "CRITICAL"
             );
             alerts.add(oilPressureAlert);
+            logService.logAlert(oilPressureAlert);
         }
 
         // Check fuel pressure
@@ -114,6 +124,7 @@ public class AlertService
                 "HIGH"
             );
             alerts.add(fuelPressureAlert);
+            logService.logAlert(fuelPressureAlert);
         }
 
         return alerts;
