@@ -1,0 +1,30 @@
+package com.savms.controller;
+
+import com.savms.entity.Alert;
+import com.savms.service.AlertService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * Controller class for alert operations.
+ *
+ * @author Yutong Cheng u7739713
+ */
+@RestController
+@RequestMapping("/api/alert")
+public class AlertController
+{
+    @Autowired
+    private AlertService alertService;
+
+    /**
+     * 获取指定车牌号的所有alert
+     * GET /api/alert/{车牌号}
+     */
+    @GetMapping("/{licensePlate}")
+    public List<Alert> getAlertsByLicensePlate(@PathVariable String licensePlate) {
+        return alertService.getAlertsByLicensePlate(licensePlate);
+    }
+} 
