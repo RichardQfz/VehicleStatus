@@ -1,6 +1,7 @@
 package com.savms.repository;
 
 import com.savms.entity.Vehicle;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -74,6 +75,43 @@ public class VehicleStatusRepository
     public boolean existsByPlate( String plate )
     {
         Query query = new Query(Criteria.where("licensePlate").is(plate));
+        return mongoTemplate.exists(query, Vehicle.class);
+    }
+
+    public Vehicle getVehicleStatusById(ObjectId id)
+    {
+        return mongoTemplate.findById(id, Vehicle.class);
+    }
+
+    public boolean updateVehicleStatusById(ObjectId id, Vehicle newStatus)
+    {
+        Query query = new Query(Criteria.where("id").is(id));
+        Update update = new Update()
+                .set( "speed", newStatus.getSpeed() )
+                .set( "leftoverEnergy", newStatus.getLeftoverEnergy() )
+                .set( "connectionStatus", newStatus.getConnectionStatus() )
+                .set( "taskStatus", newStatus.getTaskStatus() )
+                .set( "healthStatus", newStatus.getHealthStatus() )
+                .set( "engineRPM", newStatus.getEngineRPM() )
+                .set( "lubeOilPressure", newStatus.getLubeOilPressure() )
+                .set( "fuelPressure", newStatus.getFuelPressure() )
+                .set( "coolantPressure", newStatus.getCoolantPressure() )
+                .set( "lubeOilTemp", newStatus.getLubeOilTemp() )
+                .set( "coolantTemp", newStatus.getCoolantTemp() )
+                .set( "engineCondition", newStatus.getEngineCondition() );
+
+        return mongoTemplate.updateFirst( query, update, Vehicle.class ).wasAcknowledged();
+    }
+
+    public boolean deleteVehicleStatusById(ObjectId id)
+    {
+        Query query = new Query(Criteria.where("id").is(id));
+        return mongoTemplate.remove(query, Vehicle.class).wasAcknowledged();
+    }
+
+    public boolean existsById(ObjectId id)
+    {
+        Query query = new Query(Criteria.where("id").is(id));
         return mongoTemplate.exists(query, Vehicle.class);
     }
 }

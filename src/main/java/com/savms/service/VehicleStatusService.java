@@ -2,6 +2,7 @@ package com.savms.service;
 
 import com.savms.entity.Vehicle;
 import com.savms.repository.VehicleStatusRepository;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,5 +52,25 @@ public class VehicleStatusService
     public boolean existsByPlate(String plate)
     {
         return vehicleStatusRepository.existsByPlate(plate);
+    }
+
+    public Vehicle getStatusById(ObjectId id)
+    {
+        return vehicleStatusRepository.getVehicleStatusById(id);
+    }
+
+    public boolean updateStatusById(ObjectId id, Vehicle newStatus)
+    {
+        return vehicleStatusRepository.updateVehicleStatusById(id, newStatus);
+    }
+
+    public boolean deleteStatusById(ObjectId id)
+    {
+        return vehicleStatusRepository.deleteVehicleStatusById(id);
+    }
+
+    public boolean existsById(ObjectId id)
+    {
+        return vehicleStatusRepository.existsById(id);
     }
 }

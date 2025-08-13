@@ -1,12 +1,19 @@
 package com.savms.entity;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.bson.types.ObjectId;
+
 /**
  * Entity class for vehicle status.
  *
  * @author Yutong Cheng u7739713
  */
+@Document(collection = "vehicle")
 public class Vehicle
 {
+    @Id
+    private ObjectId id;
     private String licensePlate;
 
     private double speed;
@@ -29,6 +36,14 @@ public class Vehicle
     public Vehicle() {}
 
     // Getters and Setters
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
+    }
+
     public String getLicensePlate()
     {
         return licensePlate;
